@@ -1,0 +1,16 @@
+{
+  "name": "patient-form",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Patient information intake form that emails a PDF copy to the patient on submit",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "nodemailer": "^6.9.14",
+    "pdfkit": "^0.15.2"
+  }
+}

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Patient Information Form</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="form-card">
+  <header class="form-header">
+    <h1>Patient Information Form</h1>
+  </header>
+
+  <form id="patientForm" novalidate>
+
+    <div class="section-bar">Patient Info</div>
+    <div class="section-body grid-2">
+      <div class="field">
+        <label for="patientName">Patient's Name</label>
+        <input type="text" id="patientName" name="patientName" required />
+      </div>
+      <div class="field">
+        <label for="passportNo">Passport No</label>
+        <input type="text" id="passportNo" name="passportNo" required />
+      </div>
+      <div class="field">
+        <label for="patientEmail">Patient's Email</label>
+        <input type="email" id="patientEmail" name="patientEmail" placeholder="patient@gmail.com" required />
+      </div>
+      <div class="field">
+        <label for="patientAge">Patient's Age</label>
+        <input type="number" id="patientAge" name="patientAge" min="0" required />
+      </div>
+      <div class="field">
+        <label for="height">Height (CM)</label>
+        <input type="number" id="height" name="height" min="0" />
+      </div>
+      <div class="field">
+        <label for="weight">Weight (KG)</label>
+        <input type="number" id="weight" name="weight" min="0" />
+      </div>
+      <div class="field">
+        <label for="country">Country</label>
+        <select id="country" name="country">
+          <option value="">-- Select --</option>
+          <option>Algeria</option>
+          <option>Turkey</option>
+          <option>France</option>
+          <option>Germany</option>
+          <option>United Kingdom</option>
+          <option>United States</option>
+          <option>United Arab Emirates</option>
+          <option>Saudi Arabia</option>
+          <option>Other</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="section-bar">Flight Info</div>
+    <div class="section-body grid-2">
+      <div class="field">
+        <label for="arrivalCode">Flight Arrival Code</label>
+        <input type="text" id="arrivalCode" name="arrivalCode" placeholder="RTV8923 or //" />
+      </div>
+      <div class="field">
+        <label for="departureCode">Flight Departure Code</label>
+        <input type="text" id="departureCode" name="departureCode" placeholder="RTV8908 or //" />
+      </div>
+      <div class="field">
+        <label for="arrDate">Arr Date</label>
+        <input type="date" id="arrDate" name="arrDate" />
+      </div>
+      <div class="field">
+        <label for="opDate">Op Date</label>
+        <input type="date" id="opDate" name="opDate" />
+      </div>
+      <div class="field">
+        <label for="depDate">Dep Date</label>
+        <input type="date" id="depDate" name="depDate" />
+      </div>
+      <div class="field span-2">
+        <label for="flightNote">Flight Note</label>
+        <input type="text" id="flightNote" name="flightNote" placeholder="Reimbursement of 30% of the flight" />
+      </div>
+    </div>
+
+    <div class="section-bar">Treatment Info</div>
+    <div class="section-body grid-2">
+      <div class="field">
+        <label for="treatmentTypes">Type of Treatments (Ctrl+Click for multiple)</label>
+        <select id="treatmentTypes" name="treatmentTypes" multiple size="6">
+          <option>Plastic Procedure</option>
+          <option>Dental Treatment</option>
+          <option>Hair Transplantation</option>
+          <option>Eye Surgery</option>
+          <option>Orthopedic Surgery</option>
+          <option>Bariatric Surgery</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="diagnosticNo">Diagnostic No</label>
+        <input type="text" id="diagnosticNo" name="diagnosticNo" />
+      </div>
+      <div class="field span-2">
+        <label for="opTypes">Op Types (comma-separated)</label>
+        <textarea id="opTypes" name="opTypes" rows="3" placeholder="Lipo 360, J Plasma, .."></textarea>
+      </div>
+    </div>
+
+    <div class="section-bar">Financial Info</div>
+    <div class="section-body grid-2">
+      <div class="field">
+        <label for="currency">Currency</label>
+        <select id="currency" name="currency">
+          <option value="">-- Please choose an option --</option>
+          <option>USD</option>
+          <option>EUR</option>
+          <option>GBP</option>
+          <option>TRY</option>
+          <option>DZD</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="accommodationNote">Note for Accommodation</label>
+        <input type="text" id="accommodationNote" name="accommodationNote" placeholder="7 nights accommodation in Istanbul" />
+      </div>
+      <div class="field">
+        <label for="packageAmount">Package Amount</label>
+        <input type="number" id="packageAmount" name="packageAmount" min="0" step="0.01" value="0" />
+      </div>
+      <div class="field">
+        <label for="paidAmount">Paid Amount</label>
+        <input type="number" id="paidAmount" name="paidAmount" min="0" step="0.01" value="0" />
+      </div>
+      <div class="field">
+        <label for="remainingAmount">Remaining Amount</label>
+        <input type="number" id="remainingAmount" name="remainingAmount" value="0" readonly />
+      </div>
+    </div>
+
+    <button type="submit" id="submitBtn" class="submit-btn">Submit</button>
+
+    <div id="statusMessage" class="status-message" hidden></div>
+  </form>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
