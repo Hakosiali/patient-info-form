@@ -4,9 +4,11 @@ A self-contained patient intake form. On submit it:
 
 1. Generates a PDF copy of the submission on the server (pdfkit).
 2. Emails that PDF to the patient's address through your own Gmail account, via the Gmail API.
+3. Optionally logs the submission as a row in a Google Sheet (your own, acting as a simple
+   database of every submission).
 
-No third-party form/email SaaS (no EmailJS, no Formspree, no transactional email provider) —
-just your code talking directly to Google's Gmail API using your own account's credentials.
+No third-party form/email/database SaaS (no EmailJS, no Formspree, no Airtable) — just your
+code talking directly to Google's own APIs using your own account's credentials.
 
 Mail is sent over HTTPS via the Gmail API rather than raw SMTP, because many free hosting
 tiers (this app is deployed on Render's free tier) block outbound SMTP connections to stop
@@ -24,10 +26,11 @@ Copy `.env.example` to `.env`:
 cp .env.example .env
 ```
 
-Then get Gmail API credentials (one-time setup, free, no card required):
+Then get Google API credentials (one-time setup, free, no card required):
 
 1. [console.cloud.google.com](https://console.cloud.google.com) → create a project.
-2. **APIs & Services → Library** → search "Gmail API" → Enable.
+2. **APIs & Services → Library** → search and Enable both "Gmail API" and "Google Sheets API"
+   (skip Sheets if you don't want submission logging).
 3. **APIs & Services → OAuth consent screen** → User type **External** → fill in app name/
    support email → under "Test users" add your own Gmail address.
 4. **APIs & Services → Credentials → Create Credentials → OAuth client ID** → Application
@@ -38,7 +41,16 @@ Then get Gmail API credentials (one-time setup, free, no card required):
    ```
    This opens a Google consent screen in your browser (log in, click Allow) and prints a
    `GMAIL_REFRESH_TOKEN` — copy that into `.env` too, along with `GMAIL_USER` (the Gmail
-   address these credentials belong to).
+   address these credentials belong to). This same token is used for both Gmail sending and
+   Sheets logging, since it's requested with both scopes.
+6. Optional — to log submissions to a Google Sheet, run:
+   ```bash
+   node scripts/create-sheet.js
+   ```
+   This creates a new spreadsheet (titled "BCI Patient Form Submissions") with the right
+   header row already in place, and prints a `GOOGLE_SHEET_ID` to add to `.env`. Every
+   submission after that gets appended as a new row. Leave `GOOGLE_SHEET_ID` unset to skip
+   this entirely — nothing else is affected.
 
 ## Run
 
@@ -90,4 +102,8 @@ Gmail API credentials to actually send mail.
 
 ## Notes
 
-- Required fields: Patient's Name, Passport No, Patient's Email, Patient's Age.
+- Required fields: Patient's Name, Passport No, Date of Birth, Patient's Email. Age is
+  calculated automatically from the date of birth.
+- Google Sheet logging is best-effort: if it fails (e.g. quota, network), the submission
+  still generates a PDF and emails it — logging failures are only written to the server
+  console, not shown to the user.

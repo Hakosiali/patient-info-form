@@ -5,6 +5,7 @@ const fs = require("fs");
 const express = require("express");
 const { generatePatientFormPdf } = require("./lib/generatePdf");
 const { buildGmailSender } = require("./lib/sendGmail");
+const { buildSheetAppender } = require("./lib/appendToSheet");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,6 +25,16 @@ app.post("/api/submit", async (req, res) => {
 
   try {
     const pdfBuffer = await generatePatientFormPdf(data);
+
+    const appendSheet = buildSheetAppender();
+    if (appendSheet) {
+      try {
+        await appendSheet(data);
+      } catch (err) {
+        console.error("Failed to log submission to Google Sheet:", err.message);
+      }
+    }
+
     const sendMail = buildGmailSender();
 
     if (!sendMail) {
