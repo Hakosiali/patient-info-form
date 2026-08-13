@@ -9,7 +9,7 @@ const { generatePatientFormPdf } = require("./lib/generatePdf");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
+app.use(express.json({ limit: "200kb" }));
 app.use(express.static(path.join(__dirname, "public")));
 
 const REQUIRED_FIELDS = ["patientName", "passportNo", "patientEmail", "patientAge"];

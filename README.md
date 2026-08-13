@@ -30,7 +30,40 @@ mail provider's SMTP endpoint, etc.) works the same way — just set `SMTP_HOST`
 npm start
 ```
 
-Then open http://localhost:3000
+Then open http://localhost:3000 (or whatever `PORT` is set to in `.env`).
+
+## Running persistently (deployed on this machine)
+
+In production use here, the app runs under [pm2](https://pm2.keymetrics.io/) instead of a plain
+`npm start`, so it survives crashes and restarts automatically when you log into Windows:
+
+```bash
+npm install -g pm2 pm2-windows-startup
+cd patient-form
+pm2 start server.js --name patient-form
+pm2 save
+pm2-startup install   # registers pm2 to relaunch at Windows login
+```
+
+Useful commands:
+
+```bash
+pm2 status                  # check it's running
+pm2 logs patient-form       # tail logs
+pm2 restart patient-form    # apply code changes (pm2 does not hot-reload)
+```
+
+It listens on all network interfaces, so it's reachable from other devices on the same
+network at `http://<this-machine's-LAN-IP>:<PORT>` (e.g. `http://192.168.100.6:3050`) —
+find your IP with `ipconfig`. Windows Firewall blocks inbound connections by default; to
+allow it, run as admin:
+
+```powershell
+New-NetFirewallRule -DisplayName "Patient Form" -Direction Inbound -Protocol TCP -LocalPort 3050 -Action Allow
+```
+
+This is LAN-only — no domain, no HTTPS, not exposed to the internet. Exposing it beyond the
+local network (port forwarding, a domain, a real host) is a separate, deliberate step.
 
 ## Dry-run mode
 
