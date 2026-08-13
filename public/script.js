@@ -4,6 +4,8 @@ const statusMessage = document.getElementById("statusMessage");
 const packageAmount = document.getElementById("packageAmount");
 const paidAmount = document.getElementById("paidAmount");
 const remainingAmount = document.getElementById("remainingAmount");
+const dob = document.getElementById("dob");
+const patientAge = document.getElementById("patientAge");
 
 function recalcRemaining() {
   const pkg = parseFloat(packageAmount.value) || 0;
@@ -11,8 +13,24 @@ function recalcRemaining() {
   remainingAmount.value = (pkg - paid).toFixed(2);
 }
 
+function recalcAge() {
+  if (!dob.value) {
+    patientAge.value = "";
+    return;
+  }
+  const birthDate = new Date(dob.value);
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  patientAge.value = age >= 0 ? age : "";
+}
+
 packageAmount.addEventListener("input", recalcRemaining);
 paidAmount.addEventListener("input", recalcRemaining);
+dob.addEventListener("input", recalcAge);
 
 function getSelectedOptions(select) {
   return Array.from(select.selectedOptions).map((opt) => opt.value);
@@ -64,6 +82,7 @@ form.addEventListener("submit", async (event) => {
     }
     form.reset();
     recalcRemaining();
+    recalcAge();
   } catch (err) {
     showStatus(err.message || "Failed to submit the form.", "error");
   } finally {
