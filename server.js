@@ -3,7 +3,7 @@ require("dotenv").config();
 const path = require("path");
 const fs = require("fs");
 const express = require("express");
-const rateLimit = require("express-rate-limit");
+const { rateLimit, ipKeyGenerator } = require("express-rate-limit");
 const { generatePatientFormPdf } = require("./lib/generatePdf");
 const { buildGmailSender } = require("./lib/sendGmail");
 const { buildSheetAppender } = require("./lib/appendToSheet");
@@ -25,7 +25,7 @@ const submitLimiter = rateLimit({
   legacyHeaders: false,
   // Cloudflare sets this to the true client IP, more reliable than trusting
   // an X-Forwarded-For chain of unknown/variable length.
-  keyGenerator: (req) => req.headers["cf-connecting-ip"] || req.ip,
+  keyGenerator: (req) => ipKeyGenerator(req.headers["cf-connecting-ip"] || req.ip),
   message: { error: "Too many submissions from this device. Please try again later." },
 });
 
