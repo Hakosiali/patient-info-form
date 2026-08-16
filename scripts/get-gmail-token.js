@@ -18,9 +18,11 @@ const oauth2Client = new google.auth.OAuth2(GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET
 const authUrl = oauth2Client.generateAuthUrl({
   access_type: "offline",
   prompt: "consent",
+  // drive.file (not the full "spreadsheets" scope) limits access to only
+  // the file(s) this app itself creates, not every sheet in the account.
   scope: [
     "https://www.googleapis.com/auth/gmail.send",
-    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive.file",
   ],
 });
 
