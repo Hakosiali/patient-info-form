@@ -42,7 +42,9 @@ Then get Google API credentials (one-time setup, free, no card required):
    This opens a Google consent screen in your browser (log in, click Allow) and prints a
    `GMAIL_REFRESH_TOKEN` — copy that into `.env` too, along with `GMAIL_USER` (the Gmail
    address these credentials belong to). This same token is used for both Gmail sending and
-   Sheets logging, since it's requested with both scopes.
+   Sheets logging: it requests `gmail.send` plus `drive.file` (access limited to files this
+   app itself creates — not every sheet in your account) rather than the broader
+   `spreadsheets` scope.
 6. Optional — to log submissions to a Google Sheet, run:
    ```bash
    node scripts/create-sheet.js
@@ -107,3 +109,16 @@ Gmail API credentials to actually send mail.
 - Google Sheet logging is best-effort: if it fails (e.g. quota, network), the submission
   still generates a PDF and emails it — logging failures are only written to the server
   console, not shown to the user.
+
+## Security notes
+
+- The form has no login — anyone with the URL can submit it. `/api/submit` is rate-limited
+  to 5 submissions/hour per client IP (keyed on Cloudflare's `CF-Connecting-IP` header, since
+  Render's edge proxies through Cloudflare) to curb abuse; it doesn't prevent a single
+  determined user, just mass spam.
+- Credentials live only in `.env` (gitignored) and the host's environment variables — never
+  commit real values, only `.env.example`'s placeholders.
+- If any real credential is ever pasted somewhere it shouldn't be (chat, a doc, a screen
+  share), rotate it immediately: reset the Client Secret and re-run
+  `node scripts/get-gmail-token.js` for a new refresh token, in Google Cloud Console under
+  **APIs & Services → Credentials → (your OAuth client)**.
