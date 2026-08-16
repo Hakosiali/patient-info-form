@@ -3,6 +3,7 @@ require("dotenv").config();
 const path = require("path");
 const fs = require("fs");
 const express = require("express");
+const rateLimit = require("express-rate-limit");
 const { generatePatientFormPdf } = require("./lib/generatePdf");
 const { buildGmailSender } = require("./lib/sendGmail");
 const { buildSheetAppender } = require("./lib/appendToSheet");
@@ -10,12 +11,24 @@ const { buildSheetAppender } = require("./lib/appendToSheet");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Render sits behind a reverse proxy; trust its X-Forwarded-For so rate
+// limiting keys on the real client IP instead of the proxy's.
+app.set("trust proxy", 1);
+
 app.use(express.json({ limit: "200kb" }));
 app.use(express.static(path.join(__dirname, "public")));
 
+const submitLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  limit: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many submissions from this device. Please try again later." },
+});
+
 const REQUIRED_FIELDS = ["patientName", "passportNo", "patientEmail", "patientAge"];
 
-app.post("/api/submit", async (req, res) => {
+app.post("/api/submit", submitLimiter, async (req, res) => {
   const data = req.body || {};
 
   const missing = REQUIRED_FIELDS.filter((field) => !data[field]);
