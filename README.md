@@ -122,3 +122,14 @@ Gmail API credentials to actually send mail.
   share), rotate it immediately: reset the Client Secret and re-run
   `node scripts/get-gmail-token.js` for a new refresh token, in Google Cloud Console under
   **APIs & Services → Credentials → (your OAuth client)**.
+- **Gotcha:** don't call Google's token-revoke endpoint on an old refresh token as a
+  "cleanup" step after rotating credentials. In practice this can revoke the entire OAuth
+  grant for that client — including the brand-new token you just issued — not just the one
+  token passed in. Disabling the old Client Secret in Cloud Console is sufficient; leave the
+  old refresh token alone (it becomes useless anyway once its secret is disabled).
+- **Gotcha:** when updating `GMAIL_REFRESH_TOKEN` in Render's dashboard, editing the value of
+  an *existing* row can silently fail to save (confirmed by re-downloading the env file after
+  saving — the old value was still there). Deleting that row and adding it fresh via
+  "+ Add variable" worked reliably; editing `GMAIL_CLIENT_SECRET` in place never had this
+  problem, so it seems specific to that field/value shape. Always re-verify via **Export →
+  Download .env** after any credential change on Render — don't trust the UI alone.
